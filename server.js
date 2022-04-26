@@ -2,6 +2,8 @@ import express from 'express';
 // 导入路由模块
 import router from './router.js'
 
+// import parser from 'body-parser';
+
 const app = express()
 // 注册路由模块
 app.use(router)
@@ -17,34 +19,54 @@ app.use(router)
 // // 全局生效的中间件
 // app.use(mw)
 
+//时间戳转换为真实事件
+function TimeExample(timeexample) {
+    var date = new Date(timeexample);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    var Y = date.getFullYear() + '-';
+    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+    var D = date.getDate() + ' ';
+    var h = date.getHours() + ':';
+    var m = date.getMinutes() + ':';
+    var s = date.getSeconds();
+    return Y + M + D + h + m + s;
+}
+//配置解析application/json格式数据的内置中间件
+// app.use(express.json())
+
+//配置解析 application/x-www-form-urlencoded格式数据的内置中间件
+// app.use(express.urlencoded({ extended: false }))
+
+//解析表单数据的中间件
+// app.use(parser.urlencoded({ extended: false }))
+
+//自定义解析表单数据中间件
+app.use(function (req, res, next) {
+    //定义业务的逻辑
+    //1.定义一个str字符串,专门存储客户端发送过来的请求体数据
+    let str = ''
+    //2.监听req的data事件
+    req.on('data', (chunk) => {
+        str += chunk
+    })
+    //3.监听req的end事件
+    req.on('end', () => {
+        console.log(str);
+    })
+    //TODO:把字符串格式请求体数据解析成对象格式
+
+    next()
+})
+
 // 全局中间件简化形式
 app.use(function (req, res, next) {
     console.log('这是一个最简单的中间件');
     // 获取请求到达服务器的时间
-    const time = Date.now()
+    const time = TimeExample(Date.now())
     // 为req对象挂载自定义属性,从而把时间共享给后面的所有路由
     req.startTime = time
     next()
 })
-/** 
- * 中间件注意事项
- *      1. 在路由之前注册中间件(except:错误级别中间件)
- *      2. 客户端发送过来的请求可以连续调用多个中间件
- *      3. 执行完中间件的业务代码之后,不要忘记调用next()函数
- *      4. 为了防止代码逻辑混乱,next()函数之后不要添加额外的代码
- *      5. 连续调用多个中间件.共享req和res对象
- * 中间件分类
- *      1. 应用级别
- *          1. app.use(),app.get(), app.post()绑定到app实例上的中间件
- *      2. 路由级别
- *          1. 绑定到express.router()实例上的中间件
- *      3. 错误级别
- *          1. 捕获整个项目中发生的异常错误,防止项目崩溃
- *          2. function有四个形参,(err,req,res,next)
- *          3. 错误级别中间件必须注册在所有路由之后
- *      4. Express内置
- *      5. 第三方
-*/
+
 // 局部生效的中间件
 const mw1 = function (req, res, next) {
     console.log('这是局部中间件函数');
@@ -65,12 +87,31 @@ app.use(function (req, res, next) {
 //     res.send(req.params);
 // })
 
+//请求体数据放到body面板中
+app.post('/test', (req, res) => {
+    //在服务器可以使用req.body来接收客户端发送过来的请求体数据
+    //默认情况下如果不配置表单数据的中间件,则req.body默认等于undefined
+    console.log(req.body);
+    res.send('ok')
+})
+
+app.post('/post', (req, res) => {
+    //在服务器可以使用req.body来接收客户端发送过来的请求体数据
+    //url-encoded
+    console.log(req.body);
+    res.send('ok')
+})
+
 app.get('/', mw1, function (req, res) {
-    res.send('Hello World' + req.startTime)
+    res.send('Hello World ' + req.startTime)
 })
 
 app.get('/user', function (req, res) {
     res.send('Hello World' + req.startTime)
+})
+
+app.post('/user', function (req, res) {
+    res.end('ok')
 })
 
 //捕获项目异常
