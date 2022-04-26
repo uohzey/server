@@ -2,6 +2,8 @@ import express from 'express';
 // 导入路由模块
 import router from './router.js'
 
+import bodyParser from './uohzey-body-parser.js'
+
 // import parser from 'body-parser';
 
 const app = express()
@@ -40,22 +42,7 @@ function TimeExample(timeexample) {
 // app.use(parser.urlencoded({ extended: false }))
 
 //自定义解析表单数据中间件
-app.use(function (req, res, next) {
-    //定义业务的逻辑
-    //1.定义一个str字符串,专门存储客户端发送过来的请求体数据
-    let str = ''
-    //2.监听req的data事件
-    req.on('data', (chunk) => {
-        str += chunk
-    })
-    //3.监听req的end事件
-    req.on('end', () => {
-        console.log(str);
-    })
-    //TODO:把字符串格式请求体数据解析成对象格式
-
-    next()
-})
+app.use(bodyParser)
 
 // 全局中间件简化形式
 app.use(function (req, res, next) {
@@ -111,7 +98,7 @@ app.get('/user', function (req, res) {
 })
 
 app.post('/user', function (req, res) {
-    res.end('ok')
+    res.send(req.body)
 })
 
 //捕获项目异常
