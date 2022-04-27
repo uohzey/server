@@ -1,37 +1,13 @@
 import express from 'express';
 // 导入路由模块
-import router from './router.js'
+import router from './apiRouter.js';
 
 import bodyParser from './uohzey-body-parser.js'
-
+import cors from 'cors'
 // import parser from 'body-parser';
 
 const app = express()
-// 注册路由模块
-app.use(router)
 
-
-// // 最简单的中间件
-// const mw = function (req, res, next) {
-//     console.log('这是最简单的中间件函数');
-//     // 把流转关系转交给下一个中间件或路由
-//     next()
-// }
-
-// // 全局生效的中间件
-// app.use(mw)
-
-//时间戳转换为真实事件
-function TimeExample(timeexample) {
-    var date = new Date(timeexample);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-    var Y = date.getFullYear() + '-';
-    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-    var D = date.getDate() + ' ';
-    var h = date.getHours() + ':';
-    var m = date.getMinutes() + ':';
-    var s = date.getSeconds();
-    return Y + M + D + h + m + s;
-}
 //配置解析application/json格式数据的内置中间件
 // app.use(express.json())
 
@@ -44,25 +20,67 @@ function TimeExample(timeexample) {
 //自定义解析表单数据中间件
 app.use(bodyParser)
 
-// 全局中间件简化形式
-app.use(function (req, res, next) {
-    console.log('这是一个最简单的中间件');
-    // 获取请求到达服务器的时间
-    const time = TimeExample(Date.now())
-    // 为req对象挂载自定义属性,从而把时间共享给后面的所有路由
-    req.startTime = time
-    next()
+//必须在配置cors中间件之前,配置jsonp接口(卸载cors之前)
+app.use('/api/jsonp', (req, res) => {
+    //TODO:定义jsonp接口具体的实现过程
+    //1.得到函数的名称
+    const funcName = req.query.callback
+    //2.定义要发送到的客户端的数据对象
+    const data = { name: 'zs', age: 22 }
+    //3.拼接出一个字符串的调用
+    const scriptStr = `${funcName}(${JSON.stringify(data)})`
+    //4.把拼接好的字符串相应给客户端
+    res.send(scriptStr)
 })
 
-// 局部生效的中间件
-const mw1 = function (req, res, next) {
-    console.log('这是局部中间件函数');
-    next()
+//配置cors,解决接口跨域的问题
+app.use(cors())
+// 把路由模块,注册到app上
+app.use('/api', router)
+
+
+// // 最简单的中间件
+// const mw = function (req, res, next) {
+//     console.log('这是最简单的中间件函数');
+//     // 把流转关系转交给下一个中间件或路由
+//     next()
+// }
+
+// // 全局生效的中间件
+// app.use(mw)
+
+
+//时间戳转换为真实事件
+function TimeExample(timeexample) {
+    var date = new Date(timeexample);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    var Y = date.getFullYear() + '-';
+    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+    var D = date.getDate() + ' ';
+    var h = date.getHours() + ':';
+    var m = date.getMinutes() + ':';
+    var s = date.getSeconds();
+    return Y + M + D + h + m + s;
 }
-app.use(function (req, res, next) {
-    console.log('调用了第二个中间件');
-    next()
-})
+
+// 全局中间件简化形式
+// app.use(function (req, res, next) {
+//     console.log('这是一个最简单的中间件');
+//     // 获取请求到达服务器的时间
+//     const time = TimeExample(Date.now())
+//     // 为req对象挂载自定义属性,从而把时间共享给后面的所有路由
+//     req.startTime = time
+//     next()
+// })
+
+// 局部生效的中间件
+// const mw1 = function (req, res, next) {
+//     console.log('这是局部中间件函数');
+//     next()
+// }
+// app.use(function (req, res, next) {
+//     console.log('调用了第二个中间件');
+//     next()
+// })
 
 // 局部生效的中间件
 
@@ -75,31 +93,31 @@ app.use(function (req, res, next) {
 // })
 
 //请求体数据放到body面板中
-app.post('/test', (req, res) => {
-    //在服务器可以使用req.body来接收客户端发送过来的请求体数据
-    //默认情况下如果不配置表单数据的中间件,则req.body默认等于undefined
-    console.log(req.body);
-    res.send('ok')
-})
+// app.post('/test', (req, res) => {
+//     //在服务器可以使用req.body来接收客户端发送过来的请求体数据
+//     //默认情况下如果不配置表单数据的中间件,则req.body默认等于undefined
+//     console.log(req.body);
+//     res.send('ok')
+// })
 
-app.post('/post', (req, res) => {
-    //在服务器可以使用req.body来接收客户端发送过来的请求体数据
-    //url-encoded
-    console.log(req.body);
-    res.send('ok')
-})
+// app.post('/post', (req, res) => {
+//     //在服务器可以使用req.body来接收客户端发送过来的请求体数据
+//     //url-encoded
+//     console.log(req.body);
+//     res.send('ok')
+// })
 
-app.get('/', mw1, function (req, res) {
-    res.send('Hello World ' + req.startTime)
-})
+// app.get('/', mw1, function (req, res) {
+//     res.send('Hello World ' + req.startTime)
+// })
 
-app.get('/user', function (req, res) {
-    res.send('Hello World' + req.startTime)
-})
+// app.get('/user', function (req, res) {
+//     res.send('Hello World' + req.startTime)
+// })
 
-app.post('/user', function (req, res) {
-    res.send(req.body)
-})
+// app.post('/user', function (req, res) {
+//     res.send(req.body)
+// })
 
 //捕获项目异常
 app.use(function (err, req, res, next) {
@@ -107,6 +125,7 @@ app.use(function (err, req, res, next) {
     res.send('Error: ' + err.message)
 })
 
+//启动服务器
 app.listen(80, () => {
     console.log('server running at http://127.0.0.1/');
 })
