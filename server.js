@@ -5,8 +5,17 @@ import router from './apiRouter.js';
 import bodyParser from './uohzey-body-parser.js'
 import cors from 'cors'
 // import parser from 'body-parser';
+//导入session中间件
+import session from 'express-session';
 
 const app = express()
+
+//配置session中间件
+app.use(session({
+    secret: 'uohzey',
+    resave: false,
+    saveUninitialized: true,
+}))
 
 //配置解析application/json格式数据的内置中间件
 // app.use(express.json())
