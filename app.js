@@ -1,12 +1,16 @@
 import express from 'express';
 // 导入路由模块
-import router from './apiRouter.js';
-
-import bodyParser from './uohzey-body-parser.js'
+import router from './router.js';
+import userRouter from './router/user.js'
+import * as useHandler from './router_handler/user.js'
 import cors from 'cors'
-// import parser from 'body-parser';
+
 //导入session中间件
 import session from 'express-session';
+//导入jwt
+import jsonwebtoken from 'jsonwebtoken';
+import { expressjwt } from 'express-jwt';
+
 
 const app = express()
 
@@ -20,33 +24,35 @@ app.use(session({
 //配置解析application/json格式数据的内置中间件
 // app.use(express.json())
 
-//配置解析 application/x-www-form-urlencoded格式数据的内置中间件
-// app.use(express.urlencoded({ extended: false }))
+
 
 //解析表单数据的中间件
 // app.use(parser.urlencoded({ extended: false }))
 
-//自定义解析表单数据中间件
-app.use(bodyParser)
-
-//必须在配置cors中间件之前,配置jsonp接口(卸载cors之前)
-app.use('/api/jsonp', (req, res) => {
-    //TODO:定义jsonp接口具体的实现过程
-    //1.得到函数的名称
-    const funcName = req.query.callback
-    //2.定义要发送到的客户端的数据对象
-    const data = { name: 'zs', age: 22 }
-    //3.拼接出一个字符串的调用
-    const scriptStr = `${funcName}(${JSON.stringify(data)})`
-    //4.把拼接好的字符串相应给客户端
-    res.send(scriptStr)
-})
+//必须在配置cors中间件之前,配置jsonp接口(写在cors之前)
+// app.use('/api/jsonp', (req, res) => {
+//     //TODO:定义jsonp接口具体的实现过程
+//     //1.得到函数的名称
+//     const funcName = req.query.callback
+//     //2.定义要发送到的客户端的数据对象
+//     const data = { name: 'zs', age: 22 }
+//     //3.拼接出一个字符串的调用
+//     const scriptStr = `${funcName}(${JSON.stringify(data)})`
+//     //4.把拼接好的字符串相应给客户端
+//     res.send(scriptStr)
+// })
 
 //配置cors,解决接口跨域的问题
 app.use(cors())
+//配置解析 application/x-www-form-urlencoded格式数据的内置中间件
+app.use(express.urlencoded({ extended: false }))
+// //自定义解析表单数据中间件
+// app.use(bodyParser)
 // 把路由模块,注册到app上
-app.use('/api', router)
 
+
+app.use('/api', router)
+app.use('/api', userRouter)
 
 // // 最简单的中间件
 // const mw = function (req, res, next) {
@@ -129,14 +135,16 @@ function TimeExample(timeexample) {
 // })
 
 //捕获项目异常
+
+
 app.use(function (err, req, res, next) {
     console.log('发生了错误' + err.message)
     res.send('Error: ' + err.message)
 })
 
 //启动服务器
-app.listen(80, () => {
-    console.log('server running at http://127.0.0.1/');
+app.listen(3007, () => {
+    console.log('server running at http://127.0.0.1/3007');
 })
 
 // app.use(express.static('public')) 

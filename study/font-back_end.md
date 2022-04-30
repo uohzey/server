@@ -49,3 +49,19 @@
 - (JSON Web Token)目前最流行的跨域认证解决方案
 
 ![image-20220428211400807](../study/JWT.png)
+
+
+
+- jwt和session区别
+  - session将用户信息存在服务器**内存**,生成cookie返回给客户端,客户端发起请求时把所有有效的cookie发给服务器端,客户端根据cookie查找用户信息,服务器针对用户信息生成内容响应.
+  - jwt将用户信息经过加密之后生成token字符串,将token存储在**LocalStorage或SessionStorage(客户端)**,客户端发起请求时通过请求头的Authorization字段,将token发给服务器,服务器将token字符串还原成用户的信息对象,再响应给浏览器.
+- jwt
+  - Header.Payload.Signature  //头部,有效荷载,签名
+  - payload为真正的用户信息,它是用户信息经过加密之后生成的字符串
+  - header和signature时安全性相关的部分,只是为了保证token的安全性
+  - jwtwebtoken用于生成jwt字符串
+  - express-jwt用于将jwt字符串解析还原成json对象
+- jwt密钥
+  - 为了保证jwt字符串的安全性,防止jwt字符串在网络传输过程中被别人破解,需要专门定义一个用于加密和解密的secret密钥
+    - 当生成jwt字符串的时候,需要使用secret密钥对用户的信息进行加密.最终得到加密后的jwt字符串
+    - 当把jwt字符串解析还原成json对象的时候,需要使用secret密钥进行解密

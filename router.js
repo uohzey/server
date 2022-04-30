@@ -3,6 +3,7 @@ import { Router } from "express";
 //创建路由对象
 const router = Router()
 
+
 router.get('/get', (req, res) => {
     //通过req.query获取客户端查询字符串,发送到服务器的数据
     const query = req.query
