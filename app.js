@@ -2,7 +2,7 @@ import express from 'express';
 // 导入路由模块
 import router from './router.js';
 import userRouter from './router/user.js'
-import * as useHandler from './router_handler/user.js'
+import Joi from 'joi';
 import cors from 'cors'
 
 //导入session中间件
@@ -21,10 +21,23 @@ app.use(session({
     saveUninitialized: true,
 }))
 
+//响应数据的中间件
+app.use(function (req, res, next) {
+    //status默认值为1,表示失败的情况
+    //err的值,可能是一个错误对象,也可能是一个错误的描述字符串
+    res.cc = function (err, status = 1) {
+        res.send({
+            status,
+            message: err instanceof Error ? err.message : err,
+        })
+    }
+    next()
+})
+
+
+
 //配置解析application/json格式数据的内置中间件
 // app.use(express.json())
-
-
 
 //解析表单数据的中间件
 // app.use(parser.urlencoded({ extended: false }))
@@ -50,8 +63,6 @@ app.use(express.urlencoded({ extended: false }))
 // app.use(bodyParser)
 // 把路由模块,注册到app上
 
-
-app.use('/api', router)
 app.use('/api', userRouter)
 
 // // 最简单的中间件
@@ -138,8 +149,10 @@ function TimeExample(timeexample) {
 
 
 app.use(function (err, req, res, next) {
-    console.log('发生了错误' + err.message)
-    res.send('Error: ' + err.message)
+    //Joi参数校验失败
+    if (err instanceof Joi.ValidationError) res.cc(err)
+    //未知错误
+    res.cc(err)
 })
 
 //启动服务器
