@@ -1,25 +1,19 @@
 import express from 'express';
-// 导入路由模块
-import router from './router.js';
+// 导入用户路由模块
 import userRouter from './router/user.js'
+//导入用户信息路由模块
+import userinfoRouter from './router/userinfo.js';
 import Joi from 'joi';
 import cors from 'cors'
 
-//导入session中间件
-import session from 'express-session';
 //导入jwt
+//在路由之前配置解析token的中间件
 import jsonwebtoken from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
+import config from './config.js';
 
 
 const app = express()
-
-//配置session中间件
-app.use(session({
-    secret: 'uohzey',
-    resave: false,
-    saveUninitialized: true,
-}))
 
 //响应数据的中间件
 app.use(function (req, res, next) {
@@ -34,7 +28,7 @@ app.use(function (req, res, next) {
     next()
 })
 
-
+app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ['HS256'] }).unless({ path: [/^\/api/] }))
 
 //配置解析application/json格式数据的内置中间件
 // app.use(express.json())
@@ -63,7 +57,11 @@ app.use(express.urlencoded({ extended: false }))
 // app.use(bodyParser)
 // 把路由模块,注册到app上
 
+
+//挂载路由
 app.use('/api', userRouter)
+app.use('/my', userinfoRouter)
+
 
 // // 最简单的中间件
 // const mw = function (req, res, next) {
@@ -150,8 +148,10 @@ function TimeExample(timeexample) {
 
 app.use(function (err, req, res, next) {
     //Joi参数校验失败
-    if (err instanceof Joi.ValidationError) res.cc(err)
-    //未知错误
+    if (err instanceof Joi.ValidationError) return res.cc(err)
+    //身份认证失败
+    if (err.name === 'UnauthorizedError') return res.cc('身份认证失败!')
+    //未知错误(不允许连续调用res.send)
     res.cc(err)
 })
 

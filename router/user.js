@@ -11,7 +11,7 @@ const router = Router()
 router.post('/reguser', expressJoi(reg_login_schema), useHandler.regUser)
 
 //登录
-router.post('/login', useHandler.login)
+router.post('/login', expressJoi(reg_login_schema), useHandler.login)
 
 //暴露路由
 export default router
