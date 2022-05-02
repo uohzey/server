@@ -1,5 +1,5 @@
 import db from "../db/index.js"
-
+import bcrypt from "bcryptjs"
 //获取用户基本信息的处理函数
 export function getUserInfo(req, res) {
     //定义查询用户信息的SQL语句
@@ -24,5 +24,42 @@ export function getUserInfo(req, res) {
 }
 
 export function updateUserInfo(req, res) {
-    res.send('ok')
+    //定义待执行的SQL语句
+    const sql = `update ev_users set ? where id=?`
+    //调用db.query()执行SQL语句并传递参数
+    db.query(sql, [req.body, req.body.id], (err, results) => {
+        //执行SQL语句失败
+        if (err) {
+            return res.cc(err)
+        }
+        //执行SQL语句成功,影响行数不等于1
+        if (results.affectedRows !== 1) {
+            return res.cc('更新用户的基本信息失败!')
+        }
+        //success
+        res.cc('更新用户信息成功', 0)
+    })
+}
+
+export function updatePassword(req, res) {
+    //根据id查询用户信息
+    const sql = `select * from ev_users where id=?`
+    //执行根据id查询用户的信息的SQL语句
+    db.query(sql, req.auth.id, (err, results) => {
+        //执行SQL失败
+        if (err) {
+            return res.cc(err)
+        }
+        //判断结果是否存在
+        if (results.length !== 1) {
+            return res.cc('用户不存在')
+        }
+        //判断用户输入的旧密码是否正确
+        const compareResult = bcrypt.compareSync(req.body.oldPwd, results[0].password)
+        if (!compareResult) {
+            return res.cc('旧密码错误')
+        }
+        //TODO:更新数据库中的密码
+        res.cc('ok')
+    })
 }
