@@ -22,3 +22,7 @@ export function getUserInfo(req, res) {
         })
     })
 }
+
+export function updateUserInfo(req, res) {
+    res.send('ok')
+}

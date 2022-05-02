@@ -3,7 +3,7 @@ import * as useHandler from '../router_handler/user.js'
 //导入验证数据的中间件
 import expressJoi from "@escook/express-joi";
 //导入需要的验证对象
-import reg_login_schema from "../schema/user.js"
+import { reg_login_schema } from "../schema/user.js"
 //用户的路由模块
 const router = Router()
 
