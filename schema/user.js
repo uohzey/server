@@ -4,7 +4,6 @@ import Joi from "joi";
 const username = Joi.string().alphanum().min(1).max(10).required()
 //^开头,$结尾
 const password = Joi.string().pattern(/^[\S]{6,12}$/).required()
-
 const reg_login_schema = {
     body: {
         username,
@@ -16,7 +15,6 @@ const reg_login_schema = {
 const id = Joi.number().integer().min(1).required()
 const nickname = Joi.string().required()
 const email = Joi.string().email().required()
-
 const update_userinfo_schema = {
     //需要对req.body里面的数据进行验证
     body: {
@@ -39,5 +37,13 @@ const update_password_schema = {
     }
 }
 
+//定义avatar头像验证规则
+const avatar = Joi.string().dataUri().required()
+const update_avatar_schema = {
+    body: {
+        avatar
+    }
+}
+
 // 定义验证注册和登录表单数据的规则对象
-export { reg_login_schema, update_userinfo_schema, update_password_schema }
+export { reg_login_schema, update_userinfo_schema, update_password_schema, update_avatar_schema }

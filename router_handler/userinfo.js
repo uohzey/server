@@ -59,7 +59,40 @@ export function updatePassword(req, res) {
         if (!compareResult) {
             return res.cc('旧密码错误')
         }
-        //TODO:更新数据库中的密码
-        res.cc('ok')
+        //更新数据库中的密码
+        const sql = `update ev_users set password=? where id =?`
+        //对新密码进行加密处理
+        const newPwd = bcrypt.hashSync(req.body.newPwd, 10)
+        //db.query()执行SQL语句
+        db.query(sql, [newPwd, req.auth.id], (err, results) => {
+            //执行sql失败
+            if (err) {
+                return res.cc(err)
+            }
+            //判断影响的行数
+            if (results.affectedRows !== 1) {
+                return res.cc('更新密码失败!')
+            }
+            //成功
+            res.cc('更新密码成功', 0)
+        })
+    })
+}
+
+export function updateAvatar(req, res) {
+    //定义更新头像的sql语句
+    const sql = `update ev_users set user_pic=? where id=?`
+    //调用db.query()执行sql语句
+    db.query(sql, [req.body.avatar, req.auth.id], (err, results) => {
+        //执行sql语句失败
+        if (err) {
+            return res.cc(err)
+        }
+        //影响行数
+        if (results.affectedRows !== 1) {
+            return res.cc('更换头像失败')
+        }
+        //success
+        res.cc('更换头像成功', 0)
     })
 }
