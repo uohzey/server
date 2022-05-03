@@ -12,7 +12,6 @@ import jsonwebtoken from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import config from './config.js';
 
-
 const app = express()
 
 //响应数据的中间件
@@ -157,7 +156,7 @@ app.use(function (err, req, res, next) {
 
 //启动服务器
 app.listen(3007, () => {
-    console.log('server running at http://127.0.0.1/3007');
+    console.log('server running at http://127.0.0.1:3007');
 })
 
 // app.use(express.static('public')) 
