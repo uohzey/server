@@ -8,6 +8,7 @@ import expressJoi from '@escook/express-joi'
 import { update_userinfo_schema, update_password_schema, update_avatar_schema } from '../schema/user.js'
 
 //挂载路由
+
 //获取用户基本信息的路由
 router.get('/userinfo', userinfo_handler.getUserInfo)
 //更新用户信息的路由

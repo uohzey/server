@@ -39,11 +39,11 @@ const update_password_schema = {
 
 //定义avatar头像验证规则
 const avatar = Joi.string().dataUri().required()
-const update_avatar_schema = {
+export const update_avatar_schema = {
     body: {
         avatar
     }
 }
 
 // 定义验证注册和登录表单数据的规则对象
-export { reg_login_schema, update_userinfo_schema, update_password_schema, update_avatar_schema }
+export { reg_login_schema, update_userinfo_schema, update_password_schema }

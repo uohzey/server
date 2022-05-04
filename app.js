@@ -3,6 +3,8 @@ import express from 'express';
 import userRouter from './router/user.js'
 //导入用户信息路由模块
 import userinfoRouter from './router/userinfo.js';
+//导入并使用文章分类的路由
+import artCateRouter from './router/artcate.js'
 import Joi from 'joi';
 import cors from 'cors'
 
@@ -48,18 +50,29 @@ app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ['HS256'] }).unles
 //     res.send(scriptStr)
 // })
 
+// app.all('*', function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+//     res.header("X-Powered-By", ' 3.2.1')
+//     res.header("Content-Type", "application/json;charset=utf-8");
+//     next();
+// });
+
 //配置cors,解决接口跨域的问题
 app.use(cors())
 //配置解析 application/x-www-form-urlencoded格式数据的内置中间件
 app.use(express.urlencoded({ extended: false }))
 // //自定义解析表单数据中间件
 // app.use(bodyParser)
-// 把路由模块,注册到app上
+// 把路由模块,注册到app上  
 
 
 //挂载路由
 app.use('/api', userRouter)
 app.use('/my', userinfoRouter)
+app.use('/my/article', artCateRouter)
 
 
 // // 最简单的中间件

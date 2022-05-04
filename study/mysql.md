@@ -17,3 +17,16 @@ mongofiles -d gridfs -l "C:\Users\42070\Desktop\server\study\express.md" put "ex
 mongofiles -d gridfs -l "C:\Users\42070\Desktop\server\study\express.md" get "express"
 ```
 
+
+
+
+
+#### 创建表结构
+
+| 数据分类表(data_cate) |      |      |      |      |
+| --------------------- | ---- | ---- | ---- | ---- |
+| Id                    |      |      |      |      |
+| name                  |      |      |      |      |
+| alias                 |      |      |      |      |
+| is_delete             |      |      |      |      |
+
