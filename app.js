@@ -5,6 +5,8 @@ import userRouter from './router/user.js'
 import userinfoRouter from './router/userinfo.js';
 //导入并使用文章分类的路由
 import artCateRouter from './router/artcate.js'
+//导入读取数据的路由
+import readDateRouter from './router/dataread.js'
 import Joi from 'joi';
 import cors from 'cors'
 
@@ -73,6 +75,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/api', userRouter)
 app.use('/my', userinfoRouter)
 app.use('/my/article', artCateRouter)
+app.use('/api/data', readDateRouter)
 
 
 // // 最简单的中间件
