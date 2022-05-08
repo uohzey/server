@@ -77,9 +77,11 @@ export function login(req, res) {
         const tokenStr = jsonwebtoken.sign(user, config.jwtSecretKey, { expiresIn: config.exriresIn })
         //调用res.send()将token相应给客户端
         res.send({
-            status: 0,
-            message: '登录成功',
-            token: 'Bearer ' + tokenStr,
+            data: {
+                status: 200,
+                message: '登录成功',
+                token: 'Bearer ' + tokenStr,
+            }
         })
     })
 

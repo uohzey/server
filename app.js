@@ -31,6 +31,7 @@ app.use(function (req, res, next) {
     next()
 })
 
+// app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ['HS256'] }))
 app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ['HS256'] }).unless({ path: [/^\/api/] }))
 
 //配置解析application/json格式数据的内置中间件
@@ -75,7 +76,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/api', userRouter)
 app.use('/my', userinfoRouter)
 app.use('/my/article', artCateRouter)
-app.use('/api/data', readDateRouter)
+app.use('/data', readDateRouter)
 
 
 // // 最简单的中间件
