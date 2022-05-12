@@ -2,6 +2,7 @@
 
 #### 介绍
 根据黑马程序员nodejs教程实现的简易后端模块,用ES6语法替换了Commonjs,为后面使用VUE开发前端界面做准备
+前端项目地址:https://gitee.com/ye_zhou/vue_project
 
 #### 软件架构
 软件架构说明

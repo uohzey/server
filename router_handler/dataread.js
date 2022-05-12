@@ -37,3 +37,22 @@ export function getDataFromAcl(req, res) {
         )
     })
 }
+
+export function getDataFromVis(req, res) {
+    //定义sql查询语句
+    const place = `vis_` + req.body.place
+    const sql = `select * from ` + place + ` where date between ? and ? and id%?=0`
+    //调用db.query()
+    db.query(sql, [req.body.startDate, req.body.endDate, req.body.interval], (err, results) => {
+        if (err) {
+            return res.cc(err)
+        }
+        res.send({
+            data: {
+                status: 0,
+                message: '读取数据成功!',
+                data: results,
+            }
+        })
+    })
+}

@@ -79,7 +79,7 @@ export function login(req, res) {
         res.send({
             data: {
                 status: 200,
-                message: '登录成功',
+                message: '登录成功!!!!',
                 token: 'Bearer ' + tokenStr,
             }
         })
